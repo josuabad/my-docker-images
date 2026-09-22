@@ -1,0 +1,53 @@
+services:
+  postgres:
+    image: postgres:16
+    # image: postgres:18
+    # container_name: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    networks:
+      - pgnetwork
+
+  pgadmin:
+    image: dpage/pgadmin4:9.18
+    # image: dpage/pgadmin4:8.14
+    # container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_LISTEN_PORT: 5050
+    ports:
+      - "5050:5050"
+      - "127.0.0.1:5050:5050" # Only allow access from localhost
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - pgnetwork
+
+  app:
+    image: python:3.12-slim
+    container_name: python_app
+    tty: true # Mantiene el contenedor corriendo si no hay un script de inicio
+    stdin_open: true
+    volumes:
+      - .:/app # Monta el directorio actual dentro de /app
+      - pip_cache:/usr/local/lib/python3.12/site-packages
+    working_dir: /app
+    depends_on:
+      - postgres
+    networks:
+      - pgnetwork
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+  pip_cache:
+
+networks:
+  pgnetwork:

@@ -5,9 +5,7 @@ services:
     working_dir: /app
     volumes:
       - .:/app
-      - pip_cache:/root/.cache/pip
-    environment:
-      - PIP_CACHE_DIR=/root/.cache/pip
+      - pip_cache:/usr/local/lib/python3.12/site-packages
     command: ["tail", "-f", "/dev/null"]
     # deploy:
     #   resources:
