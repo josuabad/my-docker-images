@@ -1,25 +1,24 @@
 services:
   jupyter-spark:
-    # Choose between using an image or building from a Dockerfile.
-    # Uncomment the line below to use a pre-built image,
-    # or comment it out to build from the Dockerfile.
-    # image: my_pyspark_image:latest
-    build:
-      context: .
-      dockerfile: Dockerfile
-    # Borra o comenta la línea container_name:
-    # container_name: jupyter_spark_dev
-    user: root
-    privileged: true
+    image: my_pyspark_image:latest
+
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+
     ports:
-      - "8888:8888"
       - "4040:4040"
+      - "8888:8888"
+
     volumes:
-      - spark_data:/workspace
       - .:/workspace
+      - pyspark_pip_cache:/usr/local/lib/python3.12/site-packages
+
     working_dir: /workspace
+
     environment:
       - JUPYTER_ENABLE_LAB=yes
+
     # deploy:
     #   resources:
     #     limits:
@@ -27,5 +26,5 @@ services:
     #       memory: 12G
 
 volumes:
-  spark_data:
-    driver: local
+  pyspark_pip_cache:
+    external: true

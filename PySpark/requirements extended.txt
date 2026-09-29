@@ -1,0 +1,8 @@
+jupyterlab==4.6.4
+delta_spark==4.4.0
+pyspark==4.2.0
+pandas==3.0.6
+pyarrow==25.0.1
+numpy==2.5.3
+matplotlib==3.11.2
+seaborn==0.13.2

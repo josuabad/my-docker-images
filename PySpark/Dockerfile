@@ -1,20 +1,24 @@
-# Base Image: Python 3.14 Slim
-FROM python:3.14-slim
+FROM python:3.12-slim
 
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64 \
+    PATH=/usr/lib/jvm/java-21-openjdk-amd64/bin:$PATH
 
-# Instalar OpenJDK 21 y dependencias del sistema
-RUN apt-get update && apt-get install -y --no-install-recommends openjdk-21-jre-headless procps curl && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    openjdk-21-jre-headless \
+    procps \
+    curl && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Configurar variable de entorno apuntando a Java 21
-ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
-ENV PATH=$JAVA_HOME/bin:$PATH
+RUN pip install --upgrade pip
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
 WORKDIR /workspace
-
-# Instalar JupyterLab, PySpark y librerías
-RUN pip install --no-cache-dir jupyterlab pyspark findspark delta-spark
 
 EXPOSE 8888 4040
 
